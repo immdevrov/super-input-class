@@ -1,22 +1,45 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <SInput
+      label="label"
+      hint="hint"
+      placeholder="placeholder"
+      v-model="inputValue"
+      @click:prepend="clickPrepend"
+      @click:append="clickAppend"
+    >
+      <template v-slot:prepend>P</template>
+      <template v-slot:append>S</template>
+    </SInput>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import HelloWorld from './components/HelloWorld.vue'
+import SInput from './components/Input/Input.vue'
 
 @Component({
-  components: { HelloWorld }
+  components: { SInput }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  private inputValue = ''
 
+  clickPrepend (): void {
+    console.log('prepend clicked')
+  }
+
+  clickAppend (): void {
+    console.log('append clicked')
+  }
+}
 </script>
 
-<style scoped>
+<style>
+
+* {
+  box-sizing: border-box;
+}
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
