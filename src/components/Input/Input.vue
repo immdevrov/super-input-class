@@ -1,12 +1,12 @@
 <template>
   <div class="s-input-wrapper">
-    <label for="s-input" class="s-input-label">{{ label }}</label>
+    <label :for="id" class="s-input-label">{{ label }}</label>
     <div class="s-input-area">
       <Suffix type="prepend" @click:prepend="$emit('click:prepend')">
         <slot name="prepend"></slot>
       </Suffix>
       <input
-        id="s-input"
+        :id="id"
         v-model="currValue"
         class="s-input"
         :placeholder="placeholder"
@@ -23,6 +23,10 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import Suffix from './Suffix.vue'
 
+import { randomHash } from '../../helpers'
+
+const idByDefault = randomHash()
+
 @Component({
   components: { Suffix }
 })
@@ -31,6 +35,7 @@ export default class Input extends Vue {
   @Prop({ type: String, default: '' }) readonly placeholder!: string
   @Prop({ type: String, default: '' }) readonly label!: string
   @Prop({ type: String, default: '' }) readonly hint!: string
+  @Prop({ type: String, default: idByDefault }) readonly id!: string
 
   private currValue = ''
 
@@ -42,6 +47,12 @@ export default class Input extends Vue {
 </script>
 
 <style scoped>
+
+.s-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
 .s-input-area {
   position: relative;
@@ -55,6 +66,7 @@ export default class Input extends Vue {
   border-radius: var(--input-element-border-radius, 3px);
 
   display: inline-flex;
+  align-items: center;
 }
 
 .s-input {
