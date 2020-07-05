@@ -6,16 +6,22 @@
         <slot name="prepend"></slot>
       </Suffix>
       <input
+        ref="input"
         :id="id"
-        v-model="currValue"
         class="s-input"
+        :value="value"
+        :type="type"
+        :mask="mask"
         :placeholder="placeholder"
+        @input="input"
       >
       <Suffix type="append"  @click:append="$emit('click:append')">
         <slot name="append"></slot>
       </Suffix>
     </div>
-    <div class="s-input-hint">{{ hint }}</div>
+    <div class="s-input-hint">
+      <slot name="hint"></slot>
+    </div>
   </div>
 </template>
 
@@ -23,7 +29,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import Suffix from './Suffix.vue'
 
-import { randomHash } from '../../helpers'
+import { randomHash } from '@/helpers'
 
 const idByDefault = randomHash()
 
@@ -31,17 +37,57 @@ const idByDefault = randomHash()
   components: { Suffix }
 })
 export default class Input extends Vue {
-  @Prop({ type: String, required: true }) readonly value!: string
+  @Prop({ type: String, default: '' }) readonly value!: string
   @Prop({ type: String, default: '' }) readonly placeholder!: string
   @Prop({ type: String, default: '' }) readonly label!: string
-  @Prop({ type: String, default: '' }) readonly hint!: string
   @Prop({ type: String, default: idByDefault }) readonly id!: string
+  @Prop({ type: String, default: 'text' }) readonly type!: string
+  @Prop({ type: String, default: '' }) readonly mask!: string
+  @Prop({ type: Boolean, default: false }) readonly onError!: boolean
 
-  private currValue = ''
+  private currValue = this.mask
 
-  @Watch('currValue')
-  onInput (val: string) {
-    this.$emit('input', val)
+  // @Watch('currValue')
+  // onInput (val: string) {
+  //   const value = this.mask ? this.applyMask(val) : val
+  //   this.$emit('input', value)
+  // }
+
+  // get value () {
+  //   return this.currValue
+  // }
+
+  updated () {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const input = this.$refs.input as any
+    input.selectionStart = this.currValue.indexOf('_')
+    input.selectionEnd = this.currValue.indexOf('_')
+    console.log(input.value)
+    input.value = this.currValue
+    console.log(input.value)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  input (e: any) {
+    this.applySymbol(e.data)
+    console.log(e.data)
+    const value = this.currValue
+    e.target.value = value
+    this.$emit('input', value)
+  }
+
+  applySymbol (ch = '') {
+    if (this.mask) {
+      this.applyMaskBySimbol(ch)
+    } else {
+      this.currValue = this.currValue + ch
+    }
+  }
+
+  applyMaskBySimbol (ch = '') {
+    if (this.currValue.includes('_')) {
+      this.currValue = this.currValue.replace('_', ch)
+    }
   }
 }
 </script>
@@ -85,4 +131,11 @@ export default class Input extends Vue {
   border-color: var(--input-element-border-color-active, mediumseagreen);
   border-radius: var(--input-element-border-radius-active, 3px)
 }
+
+.s-input-label {
+  color: var(--input-label-color, Teal);
+  font-size: var(--input-label-font-size, .9em);
+  margin: var(--input-label-margin, 0px 0px 5px 0px)
+}
+
 </style>

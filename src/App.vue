@@ -3,14 +3,16 @@
     <img alt="Vue logo" src="./assets/logo.png">
     <SInput
       label="label"
-      hint="hint"
       placeholder="placeholder"
+      mask="+7 (___) ___-__-__"
+      type="tel"
       v-model="inputValue"
       @click:prepend="clickPrepend"
       @click:append="clickAppend"
     >
       <template v-slot:prepend>P</template>
       <template v-slot:append>S</template>
+      <template v-slot:hint>hint</template>
     </SInput>
   </div>
 </template>
