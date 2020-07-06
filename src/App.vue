@@ -4,7 +4,7 @@
     <SInput
       label="label"
       placeholder="placeholder"
-      mask="+7 (___) ___-__-__"
+      mask="+7 (###) ###-##-##"
       type="tel"
       v-model="inputValue"
       @click:prepend="clickPrepend"

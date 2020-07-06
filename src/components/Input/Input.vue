@@ -9,11 +9,10 @@
         ref="input"
         :id="id"
         class="s-input"
-        :value="value"
+        v-mask="mask"
+        v-model="currValue"
         :type="type"
-        :mask="mask"
         :placeholder="placeholder"
-        @input="input"
       >
       <Suffix type="append"  @click:append="$emit('click:append')">
         <slot name="append"></slot>
@@ -45,49 +44,11 @@ export default class Input extends Vue {
   @Prop({ type: String, default: '' }) readonly mask!: string
   @Prop({ type: Boolean, default: false }) readonly onError!: boolean
 
-  private currValue = this.mask
+  private currValue = ''
 
-  // @Watch('currValue')
-  // onInput (val: string) {
-  //   const value = this.mask ? this.applyMask(val) : val
-  //   this.$emit('input', value)
-  // }
-
-  // get value () {
-  //   return this.currValue
-  // }
-
-  updated () {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const input = this.$refs.input as any
-    input.selectionStart = this.currValue.indexOf('_')
-    input.selectionEnd = this.currValue.indexOf('_')
-    console.log(input.value)
-    input.value = this.currValue
-    console.log(input.value)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  input (e: any) {
-    this.applySymbol(e.data)
-    console.log(e.data)
-    const value = this.currValue
-    e.target.value = value
-    this.$emit('input', value)
-  }
-
-  applySymbol (ch = '') {
-    if (this.mask) {
-      this.applyMaskBySimbol(ch)
-    } else {
-      this.currValue = this.currValue + ch
-    }
-  }
-
-  applyMaskBySimbol (ch = '') {
-    if (this.currValue.includes('_')) {
-      this.currValue = this.currValue.replace('_', ch)
-    }
+  @Watch('currValue')
+  onInput (val: string) {
+    this.$emit('input', val)
   }
 }
 </script>
